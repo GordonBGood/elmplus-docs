@@ -223,7 +223,7 @@ As Elm is statically typed, Type's are a very important consideration for the la
 
 #### **Primitive (Native or "Kernel") Types**
 
-There is actually only one native type in JavaScript and that is the 64-bit IEEE floating point number represented in Elm as `Float`; however, modern JavaScript engines can also treat the lower order 32-bits contained within the mantissa of a `Float` as a 32-bit `Int` so those are considered as Primitive/Native/"Kernel" as well.
+There is actually only one native type in JavaScript and that is the 64-bit IEEE floating point number represented in Elm as `Float`; however, modern JavaScript engines can also treat the lower order 32-bits contained within the mantissa of a `Float` as a 32-bit `Int` so those are considered as Primitive/Native/"Kernel" as well.  In Elm, when `Int`'s are used in Bitwise functions of bitwise and'ing, or'ing, exclusive or'ing, left and right shifting (logical and arithmetic), and bit complementing, the result is always truncated/clipped to 32-bits, but other operations leave the number represented as whatever integer precision the 53-bit mantissa of the 64-bit floating bit representation can sustain.
 
 #### **The Char Type**
 
@@ -375,7 +375,14 @@ Elm Literals may take the following forms:
 
 * Int literals have a maximum range of -2^31 to 2^32-1 and Float literals have the range and precision of an IEEE double precision floating point number.
 
-* Char literals are inside a pair of left appostrophes/single quotes and may include escaped characters or Unicode code points in `\u{hhhhh}` syntax where "h" represents a hex digit.
+* Char literals are inside a pair of right appostrophes/single quotes and may include escaped characters as per the following table, where escaped characters are represented by a single '/' character followed by one of the following characters to represent a given unicode code point:
+  1. '/' meaning a double back slash which represents a single back slash in the Char.
+  2. 'r' to represent a carriage return character.
+  3. 'n' to represent a new line character.
+  4. 't' to represent a tab character (forbidden except in line comments the source code, but not in characters and strings).
+  5. '"' to represent a single double quotation character.
+  6. ''' to represent a single back tick (apostrophe) character.
+  7. 'u' immediately followed by four to six hexidecimal digits (upper or lower case) enclosed in `{..}` characters representing unicode code points from 0x000000 to 0x10FFFF.
 
 * String literals are inside a pair of double quotes and may include escaped characters and/or Unicode code points as above.  String literals may also be inside a pair of sets of adjacent triple quote characters, in which case the carriage return and linefeed characters inside the string will be preserved meaning one can define very long multi-line `String`'s this way.  Since indentation and tabs don't have a meaning, the "triple-quoted `String` contents can be defined right from the left column and can include tab characters just as can regular `String`'s.
 
@@ -387,11 +394,11 @@ Elm Literals may take the following forms:
 
 * Tuple literals are inside a matching pair of round brackets with element assignments separated by commas.
 
-* Record literals are inside a matching pair of curly brackets with field assignments comma separated from each other.
+* Record literals are inside a matching pair of curly brackets with field assignments using the '=' character comma separated from each other.  If a record has a type alias which is immediately assigned to a given record, the type alias can be used as a "contructor function" without requiring curly brackets or field assignments where fields are assigned according to their position.
 
 * List literals are inside a matching pair of square brackets where elements (which must all be of the same Type) are comma separated, or consist of an empty List with no elements.
 
-* Literals for other complex Type's built up from the available Type's are created just by using their constructors.
+* Literals for other complex Type's built up from the available Type's are created just by using their constructors as a "constructor function".
 
 ### **Values**
 
