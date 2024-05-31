@@ -90,19 +90,29 @@ These last keywords can define a new symbol operator, but can only be used from 
 | &#124; | [used in Record update syntax to specify fields to change](#the-record-type) |
 | : | [separates the value or function name from its Type in a Type Annotation](#type-annotations) |
 | \ | [defines the start of a lambda definition before its argument variables](#functions) |
+| -> | [separates the arguments of a function from each other and the result in a type annotation](#type-annotations) |
 | -> | [separates the arguments of a lambda from its result expression](#functions) |
 | -> | [separates `case ... of` target pattern from its result expression](#case--of-expressions) |
 | = | [binds an already defined Type to a Type Alias Name](#type-aliases) |
 | = | [binds an expression to a Record field](#the-record-type) |
 | = | [binds a series of Constructor definitions to a Custom Type Name](#custom-types) |
-| = | [binds an expression to a value or function name definition](#values) |
+| = | [binds an expression to a value definition](#values) |
+| = | [binds an expression to a function name definition](#functions) |
+| = | [binds an expression to a pattern in a definition](#pattern-matching) |
 | ' | [pair used to create a `Char` literal](#literals) |
 | " | [pair used to create a `String` literal](#literals) |
 | """ | [pair create `String` literal preserving return, new line, and quote characters](#literals) |
 | [ ..., ... ] | [used to construct a List where all elements have the same Type](#literals) |
 | [] | [used to construct an empty List](#literals) |
-| ... :: ... | [used to form a new List combining a head to an existing tail List](#list-pattern-matching) |
+| ... :: ... | [used to form a new List combining a head to an existing tail List](#operators) |
 | ... :: ... | [used to pattern match the head and rest of a List](#list-pattern-matching) |
+| ^, *, /, //, +, - | [arithmetic operators for number's/Float's/Int's](#operators) |
+| ==, /=, <, >, <=, >= | [comparison operators for comparable/comappend types](#operators) |
+| &&, || | [boolean operators Bool type](#operators) |
+| ++ | [append operators append and comappend types (List's and String's)](#operators) |
+| |>, <|, >>, << | [function pipelining and composition operators for single argument functions](#operators) |
+| |., |= | [egnores/keeps the result of second parser from "elm/parser" package](#operators) |
+| <?>, </> | [adds a "?" or a "/" to a URL for "elm/url" package](#operators) |
 
 Operator symbols are all defined [in elm packages](#operators) and are defined as per the following example for a new `(^^^)` exclusive or operator:
 ```elm
@@ -491,14 +501,14 @@ Bool operators (for two Bool types):
 | precedence | operators | associativity | description |
 |-----------:|:---------:|:--------------|-------------|
 | 2 | && | right | result of logical "and" of first and second |
-| 2 | || | right | result of logical "or" of first and second |
+| 2 | &#124;&#124; | right | result of logical "or" of first and second |
 
 Append operator (for appendable or compappend types):
 | precedence | operators | associativity | description |
 |-----------:|:---------:|:--------------|-------------|
 | 5 | ++ | right | appending of first and second |
 
-Function chaining and pipeline operators (for two  Rank one functions):
+Function pipeline and composition operators (for two single argument functions):
 | precedence | operators | associativity | description |
 |-----------:|:---------:|:--------------|-------------|
 | 9 | <&#124; | right | passes forced right to left function |
