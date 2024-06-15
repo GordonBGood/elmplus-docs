@@ -82,7 +82,9 @@ These last keywords can define a new symbol operator, but can only be used from 
 | (comma list) | [import all in module without qualification](#imports) |
 | (..,..), (..,..,..) | [constructor for Tuple Type](#the-tuple-type) |
 | (..,..), (..,..,..) | [pattern for Tuple Type](#tuple-pattern-matching) |
-| ( ... ) | [change precidence within expression](#changing-or-asserting-expression-precidence) |
+| ( ... ) | [separates a Pattern Match Term in a function definition or destructure](#pattern-matching) |
+| ( ... ) | [separates a function parameter in a Type Annotation](#type-annotations) |
+| ( ... ) | [change precedence within expression](#changing-or-asserting-expression-precedence) |
 | { .., ... } | [used to define Record Type including field types](#the-record-type) |
 | { .., ... } | [constructor for Record Type](#the-record-type) |
 | { .., ... } | [pattern for Record Type](#record-pattern-matching) |
@@ -119,7 +121,7 @@ Operator symbols are all defined [in elm packages](#operators) and are defined a
 import Bitwise
 infix left 3 (^^^) = Bitwise.xor
 ```
-where the new infix operator `^^^` is defined to have left associativity (meaning that the expression to the left is evaluated before application of the operator) with a precidence of 3 (with 9 as highest priority and higher numbers getting evaluated before higher numbers if there are no brackets with function application the very highest priority) and the expression at the right of the equals sign is the code that actually gets run when the operator is used.  Only binary operators can be defined meaning that all defined operations must take two arguments and return a single result.
+where the new infix operator `^^^` is defined to have left associativity (meaning that the expression to the left is evaluated before application of the operator) with a precedence of 3 (with 9 as highest priority and higher numbers getting evaluated before higher numbers if there are no brackets with function application the very highest priority) and the expression at the right of the equals sign is the code that actually gets run when the operator is used.  Only binary operators can be defined meaning that all defined operations must take two arguments and return a single result.
 
 ## Language Elements
 
@@ -470,6 +472,12 @@ Type Annotations are placed before and at the same indentation level of the name
 hyptenuse : Float -> Float -> Float
 hypotenuse x y = sqrt (x^2 + y^2)
 ```
+For function arguments that are functions (nested to any level), the function parameter must be surrounded by round brackets/parenthesis to separate the sub-function from the outer function as in the following example for the `map` function over list's:
+```elm
+map : (a -> b) -> List a -> List b
+```
+where the first argument to `map` is a function taking a Type `a` and returning a Type `b` identified by Type variables, which shows it is the converter function converting the input `List a` to `List b`.
+
 The compiler will warn when any global value or function definition lacks a Type Annotation.  [This document](https://github.com/elm/compiler/blob/master/hints/type-annotations.md) explains workarounds for Type annotation problems.
 
 ### **Operators**
@@ -558,7 +566,7 @@ Calling functions and using operators have a defined default precedence or order
 
 ### **Pattern Matching**
 
-Pattern Matching, which is called destructuring in some languages, can be used in three places as follows:  in the arguments for functions to determine the field values of complex types (only if there is only one constructor as otherwise it is not **Total** meaning all cases covered), as a `let` left hand side with the same condition as to single Constructor, or its most common use as a `case ... of` target where all Constructor possibilities can be covered by using multiple pattern matches in multiple case targets.  Any given pattern can have a `as` suffix to provide a name for the argument of the entire pattern if it matches.
+Pattern Matching, which is called destructuring in some languages, can be used in three places as follows:  in the arguments for functions to determine the field values of complex types (only if there is only one constructor as otherwise it is not **Total** meaning all cases covered), as a `let` left hand side with the same condition as to single Constructor, or its most common use as a `case ... of` target where all Constructor possibilities can be covered by using multiple pattern matches in multiple case targets.  Any given pattern can have an `as` suffix to provide a name for the entire pattern "term" if it matches.  Note that a set of round brackets/parentesis with nothing inside is a valid pattern match for the "Unit" Type and that also that a set of round brackets/parentesis surrounding a single Pattern "term" only separates out the Pattern "term" (optionally including an `as` alias) as a valid Pattern "term"; neither of these are cases of "Tuple Pattern's" as per the following category.
 
 #### **Tuple Pattern Matching**
 
