@@ -16,8 +16,8 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add the `Lazy` Type Back to the Language**](#add-the-lazy-type-back-to-the-language)
     - [**Add a `LinearArray` Type to the Language**](#add-a-lineararray-type-to-the-language)
     - [**Add a `Change` Type to the Language**](#add-a-change-type-to-the-language)
-    - [**Add a `Changing` Type to the Language**](#add-a-changing-type-to-the-language)
-    - [**Add a `ChangingIndexable` Type to the Language**](#add-a-changingindexable-type-to-the-language)
+    - [**Add a `Changing` Type to the Language - NO LONGER PROPOSED**](#add-a-changing-type-to-the-language---no-longer-proposed)
+    - [**Add a `ChangingIndexable` Type to the Language - NO LONGER PROPOSED**](#add-a-changingindexable-type-to-the-language---no-longer-proposed)
     - [**Fix the Process Module to Support Multi-Processing**](#fix-the-process-module-to-support-multi-processing)
   - [Changes that Require Compiler Changes](#changes-that-require-compiler-changes)
     - [**Fix that the List Type may be Hidden**](#fix-that-the-list-type-may-be-hidden)
@@ -26,17 +26,19 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add `Float32` to the Float Types**](#add-float32-to-the-float-types)
     - [**Add `BigInt` Type for Multi-Precision Integers**](#add-bigint-type-for-multi-precision-integers)
     - [**Make Contexts as in `comparable`/`appendable` More Consistent**](#make-contexts-as-in-comparableappendable-more-consistent)
+    - [**Change that "Triple-Quote String's Apply String Escapes**](#change-that-triple-quote-strings-apply-string-escapes)
     - [**Add Contexts/`capability`'s to the Language**](#add-contextscapabilitys-to-the-language)
     - [**Add Many More `capability`'s**](#add-many-more-capabilitys)
+    - [**Add the Ability to Specify Type Constraints**](#add-the-ability-to-specify-type-constraints)
     - [**Add `UnsafePointer`Primative Type to the Language**](#add-unsafepointerprimative-type-to-the-language)
-    - [**Add `do` Notation "Sugar" to the Language**](#add-do-notation-sugar-to-the-language)
+    - [**Add `do` Notation "Sugar" to the Language - NOW NOT CONSIDERED DESIRABLE**](#add-do-notation-sugar-to-the-language---now-not-considered-desirable)
     - [**Add a TEST Pragma that Tests Code When Run in Test Mode**](#add-a-test-pragma-that-tests-code-when-run-in-test-mode)
     - [**Add `INLINE`/`NOINLINE` Pragmas**](#add-inlinenoinline-pragmas)
     - [**Add Code Generation Macros Capability**](#add-code-generation-macros-capability)
-    - [**Add Implicit `forall` and RankNTypes**](#add-implicit-forall-and-rankntypes)
-    - [**Add Higher Kinded Types (HKT's)**](#add-higher-kinded-types-hkts)
+    - [**Add Explict `forall` and RankNTypes - CHANGED TO EXPLICT AND WITHOUT RANKNTYOES**](#add-explict-forall-and-rankntypes---changed-to-explict-and-without-rankntyoes)
+    - [**Add Higher Kinded Types (HKT's) - NO LONGER A PLANNED FEATURE**](#add-higher-kinded-types-hkts---no-longer-a-planned-feature)
     - [**Make the `let` and `in` Keywords Optional**](#make-the-let-and-in-keywords-optional)
-  - [Things Not Proposed to Change](#things-not-proposed-to-change)
+  - [Things Not Proposed to Change - ADDED TO MAKE USING CAPABILITIES MORE GENERAL](#things-not-proposed-to-change---added-to-make-using-capabilities-more-general)
     - [**Make the `type` and `type alias` Keywords Optional**](#make-the-type-and-type-alias-keywords-optional)
   - [Summary](#summary)
   - [Appendix](#appendix)
@@ -120,6 +122,12 @@ Next, all types should be automatically comparable if their fields are comparabl
 The "number" context will be expanded to include all of the new integer and float types, with sub contexts for all the types of integers and for all the types of floats, rationals, complex numbers, etc.
 
 Some of these changes are related to using the following "capabilities" to override default definitions and apply custom features to type aliases and custom types.
+
+### **Change that "Triple-Quote String's Apply String Escapes**
+
+Currently in Elm, triple quoted strings automatically include carriage return, linefeed, and quotation symbols within the triple-quoted string as if they had been typed as escape characters, but there is still the difficulty that enclosing strings that contain escaped characters won't be correctly interpreted by string processing in an Elm program.  For instance, if the string represents Elm source code and contains a `\ x = 42` lambda definition, the Elm compiler will complain at the `\` symbol as trying to interpret it as an escape withou the required following character so one has to change these into double `\\` sequences; also, combinations that are intended to be escape sequences will also have to have the single back slashes converted to double back slashes.  Even for Unicode code point escape sequences, one could just copy and paste in the actual code characters when a character is desired that can't be typed on the current language keyboard, so is unnessary within these "special" strings.
+
+This is potentially a back breaking compatibility change so one might keep the current behaviour for source files with the ".elm" file extension and reserve this new behaviour for source files with the new ".fir" file extension.
 
 ### **Add Contexts/`capability`'s to the Language**
 
