@@ -45,6 +45,7 @@ This Elm language reference material has been reverse engineered from the [Elm c
       - [**Record Pattern Matching**](#record-pattern-matching)
       - [**Custom Type Pattern Matching**](#custom-type-pattern-matching)
       - [**List Pattern Matching**](#list-pattern-matching)
+    - [**WebGL Shaders**](#webgl-shaders)
   - [Appendix](#appendix)
     - [Project JSON Formats](#project-json-formats)
 
@@ -618,6 +619,10 @@ withDefault dv mybe = -- can't use patter here
 #### **List Pattern Matching**
 
 Elm `List`'s may also be used in pattern matching where `[]` is the pattern for an empty `List` and `a::ras` is the pattern for a non-empty `List` where `a` will be bound to the head element of the matched list and `ras` will be bound to the tail `List` of the matched `List` if the pattern matches where an optional `as` name can be used to match the whole `List` on a match.
+
+### **WebGL Shaders**
+
+Modern languages often support embedding describing graphics textures and rendering 2D and 3D shapes using these textures as Domain Specific Languages (DSL's) in their syntax to direct commands to the graphics CPU; Elm does this for its web pages by using WebGL specifications (Web Graphics Language) to embed C language-like syntax shader directives inside the `[glsl| ... |]` expression where the block of code inside the delimiters is OpenGL Shading Language (GLSL) that is compiled to instruct the Graphics Processing Unit (GPU) on the textures used and how to render the graphics.  This shader language syntax is not directly part of the Elm syntax and must be learned from various documentation available from the Internet such as [this one](https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.4.60.pdf).
 
 ## Appendix
 
