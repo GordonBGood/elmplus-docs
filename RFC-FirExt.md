@@ -13,8 +13,8 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add a Console Module to the Core Package**](#add-a-console-module-to-the-core-package)
     - [**Add a FileIO Module to the Files Package**](#add-a-fileio-module-to-the-files-package)
     - [**Add Symbolic Binary Operators for Bitwise Functions**](#add-symbolic-binary-operators-for-bitwise-functions)
-    - [**Add the `Lazy` Type Back to the Language**](#add-the-lazy-type-back-to-the-language)
-    - [**Add a `LinearArray` Type to the Language**](#add-a-lineararray-type-to-the-language)
+    - [**Add the `Lazy` Type and Package Back to the Language**](#add-the-lazy-type-and-package-back-to-the-language)
+    - [**Add a `LinearArray a` Type to the Language**](#add-a-lineararray-a-type-to-the-language)
     - [**Add a `Change` Type to the Language**](#add-a-change-type-to-the-language)
     - [**Add a `Changing` Type to the Language - NO LONGER PROPOSED**](#add-a-changing-type-to-the-language---no-longer-proposed)
     - [**Add a `ChangingIndexable` Type to the Language - NO LONGER PROPOSED**](#add-a-changingindexable-type-to-the-language---no-longer-proposed)
@@ -27,15 +27,15 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add `BigInt` Type for Multi-Precision Integers**](#add-bigint-type-for-multi-precision-integers)
     - [**Make Contexts as in `comparable`/`appendable` More Consistent**](#make-contexts-as-in-comparableappendable-more-consistent)
     - [**Change that "Triple-Quote String's Apply String Escapes**](#change-that-triple-quote-strings-apply-string-escapes)
-    - [**Add Contexts/`capability`'s to the Language**](#add-contextscapabilitys-to-the-language)
+    - [**Add Contexts/`capability`'s/`Ability`'s to the Language**](#add-contextscapabilitysabilitys-to-the-language)
     - [**Add Many More `capability`'s**](#add-many-more-capabilitys)
     - [**Add the Ability to Specify Type Constraints**](#add-the-ability-to-specify-type-constraints)
     - [**Add `UnsafePointer`Primative Type to the Language**](#add-unsafepointerprimative-type-to-the-language)
-    - [**Add `do` Notation "Sugar" to the Language - NOW NOT CONSIDERED DESIRABLE**](#add-do-notation-sugar-to-the-language---now-not-considered-desirable)
+    - [**Add `do` Notation "Sugar" to the Language**](#add-do-notation-sugar-to-the-language)
     - [**Add a TEST Pragma that Tests Code When Run in Test Mode**](#add-a-test-pragma-that-tests-code-when-run-in-test-mode)
     - [**Add `INLINE`/`NOINLINE` Pragmas**](#add-inlinenoinline-pragmas)
     - [**Add Code Generation Macros Capability**](#add-code-generation-macros-capability)
-    - [**Add Explict `forall` and RankNTypes - CHANGED TO EXPLICT AND WITHOUT RANKNTYOES**](#add-explict-forall-and-rankntypes---changed-to-explict-and-without-rankntyoes)
+    - [**Add Explict `forall` and RankNTypes - CHANGED TO USE WITH EXPLICT EXISTENTIAL TYPES WITHOUT RANKNTYPES**](#add-explict-forall-and-rankntypes---changed-to-use-with-explict-existential-types-without-rankntypes)
     - [**Add Higher Kinded Types (HKT's) - NO LONGER A PLANNED FEATURE**](#add-higher-kinded-types-hkts---no-longer-a-planned-feature)
     - [**Make the `let` and `in` Keywords Optional**](#make-the-let-and-in-keywords-optional)
   - [Things Not Proposed to Change - ADDED TO MAKE USING CAPABILITIES MORE GENERAL](#things-not-proposed-to-change---added-to-make-using-capabilities-more-general)
@@ -57,23 +57,23 @@ x = 1_000_000_000 -- instead of 1000000000
 
 ### **Add a Console Module to the Core Package**
 
-When using Fir to write a console application, this Module provides functions to read environment variables, to use command line arguments, and to read and write strings to the terminal as well as read characters from the same (when the target back-end supports some or any of these, otherwise some sort of error value...).
+When using Fir to write a console application, this Module provides functions to read environment variables, to use command line arguments, and to read and write strings to the terminal as well as read characters from the same (when the target back-end supports some or any of these, otherwise some sort of error value...).  This new Console Module would only be able to be imported and used when the application is a command line application as designatied in the "fir.json" file for the project.
 
 ### **Add a FileIO Module to the Files Package**
 
-This FileIO Module provides the ability to find the home and current directories/folders, to manipulate directory/folder structure including adding and removing directories/folders, to get file status such as file size or last modified time, to remove a files, to read and write plain text files, and to read and write binary files (when the target back-end supports some or any of these, otherwise some sort of error value...).
+This FileIO Module provides the ability to find the home and current directories/folders, to manipulate directory/folder structure including adding and removing directories/folders, to get file status such as file size or last modified time, to remove a files, to read and write plain text files, and to read and write binary files (when the target back-end supports some or any of these, otherwise some sort of error value...).  This new Console Module would only be able to be imported and used when the application is not a web application as identified from the "fir.json" file for the project.
 
 ### **Add Symbolic Binary Operators for Bitwise Functions**
 
 In a manner similar to the bitwise operators used by F#, implement `infix` operators `(&&&)`, `(|||)`, `(^^^)`, `(<<<)`, and `(>>>)` with the same associativities and precedence as for these operators in F# for bitwise and, or, exclusive or, shift left, and shift right, respectively; in particular, use of these symbolic operators fixes a potential name clash with the `Bitwise.xor` and the Boolean `Basics.xor` that is included in the "Prelude" automatically imported functions.  These operators would be defined in the `Basics` Module to be automatically imported and can be applied to all integer/`Countable` types where the arguments and the result must be the same integer/`Countable` Type.
 
-### **Add the `Lazy` Type Back to the Language**
+### **Add the `Lazy` Type and Package Back to the Language**
 
 This also allows having a standard `LazyList` module in the core package with appropriate functions as per non `Lazy` `List`'s.  Although using the Lazy type and lazy lists are slower than using more iterative techniques such as recursive functions, they can be used to write elegant code when performance is not critical such as in outer "loops" or for handling block structures such as producing a lazy list of array.  The documentation for these should warn users and show appropriate use.
 
-### **Add a `LinearArray` Type to the Language**
+### **Add a `LinearArray a` Type to the Language**
 
-By itself, this is an immutable content array where it contains elements all of the same Type just as for lists and the current persistent `Array` implementation, but can be used with other features so it can be modified in a structured way using similar techniques to how `STArray` works in GHC Haskell.  Alternately, it may be considered to use compiler magic to do in-place mutation when the array to be changed is never referenced again after the modification call.  These arrays will also support automatic elision of array index bounds checks when it can be proved that the index is within bounds (lifting the bounds check ouside of inner loops).
+By itself, this is an immutable content array where it contains elements all of the same Type just as for lists and the current persistent `Array` implementation, but can be used with other features so it can be modified in a structured way using similar techniques to how `STArray` works in GHC Haskell.  Alternately, it may be considered to use compiler magic to do in-place mutation when the array to be changed is never referenced again after the modification call.  These arrays will also support automatic elision of array index bounds checks when it can be proved that the index is within bounds (lifting the bounds check ouside of inner loops).  To easier support the optimizations to make use of these contiguous arrays fast, they should likely be a built-in Type such as `List a` and can be represented in Type signatures as `[| <designated content Type> |]`, and by the same symbols when defining `LinearArray a` literals as for example `[| 1, 2, 3 |]` to define an array of `Number` containing the three `Number` elements.
 
 ### **Add a `Change` Type to the Language**
 
@@ -129,7 +129,7 @@ Currently in Elm, triple quoted strings automatically include carriage return, l
 
 This is potentially a back breaking compatibility change so one might keep the current behaviour for source files with the ".elm" file extension and reserve this new behaviour for source files with the new ".fir" file extension.
 
-### **Add Contexts/`capability`'s to the Language**
+### **Add Contexts/`capability`'s/`Ability`'s to the Language**
 
 These are similar to GHC Haskell's Type Classes with a different name and (probably) instantiated by "duck typing" where if a type implements all of the required functions for a `capability` inside a `where` clause, it has that capability.  The justification for `capability`'s instead of just Elm's context's is that the current contexts get more and more complicated as the number of primitive types and the variety of `capabilities` increase with all their combinations.  For instance, already Elm had to define a `compappend` context for those types that have both `comparable` and `appendable` contexts and even with only the proposed `equatable` context (in order for lambdas/functions to be tested for equality/sameness), this adds even more combinations and confusion.  Also, it would be good to have almost all types, including Tuple's, Record's, and Custom Type's, be `comparable` and `equatable` if their sub types are these, which would get very complex.  As well, with the current Elm context system, one can't "mix and match" type restrictions freely where with `capability`'s one can.  The syntax does not have to be complex, where all of the basic `capability`'s are defined with a default implementation in the `capability` definition `where` block, and types can override the default implementations by redefining them in their own `where` block at the time the Type (and maybe Type Alias) is defined, where this may only rarely need to be done for new Type's (and maybe Type Alias's) or for the more complex `capability`'s.
 
@@ -151,6 +151,8 @@ Proposed `capability`'s will be at least the following:
 17. Indexable -> types whose components can be accessed by an integer index value for both reading and writing (Copy on Write when not "last-used"; mutated in place when "last-used").
 15. Chainable -> actually defines the binding(s) for a Haskell monad although we don't call it that in Elm/Fir; and includes ordering of arguments both ways as in `andThen` and `chain` functions.
 16. Changeable -> this is used for types that allow mutation via a monadic state combinator type chain of functions; an example of this would be the `Ref` type equivalent to the `STRef` type in Haskell.
+
+Some of these capabilities/abilities, such as `Mappable`, `MultiMappable`, and `Chainable`, which are applied to Type's that are containers for one or more other same Type's, require Higher Kinded Type's (HKT's) in order to work.  The pure functional languages of Haskell and PureScript have HKT's as necessary in their use of "Type Classes" which are essentially the same as the capabilities/abilities described here; OCaml, which is not a pure functional language also essentially uses HKT's in their equivalent abilities using "module's" but are limited to HKT's containing only one Type although that Type can be a compound Type containing other types such as a Tuple.
 
 ### **Add Many More `capability`'s**
 
@@ -177,7 +179,7 @@ This and other "unsafe" types and functions as required will aid in Foreign Func
 
 Another unsafe function added to the language might be `unsafeConvert` that will cast any Type to any other type as long as they have the same memory representation (unchecked as to memory representation).  Use of these "unsafe" abilities might be limited to only in conjuntion with the FFI module.
 
-### **Add `do` Notation "Sugar" to the Language - NOW NOT CONSIDERED DESIRABLE**
+### **Add `do` Notation "Sugar" to the Language**
 
 This makes code using `Chainable` types much easier to read in minimizing the requirement for brackets and indentation to define scope of interor functions and will apply when manipulating `Chainable`'s of the same type within the `do` block.  In actual fact, the `do` keyword may be optional in that as long as all of the "chains" containing a `<-` symbol are aligned (as they would have to be anyway) and the end of any path through the "do" block ends in a "wrap" or other function returning the `AndThenable` Type also aligned with the "block" (as it has to do anyway), everything is fine without the `do`.
 
@@ -203,7 +205,7 @@ Note that one doesn't have to include the name of the function in these pragmas 
 
 In order to keep the Fir language simple, it is not proposed to have full Abstract Syntax Tree (AST) generation macros, but it is desired that Fir be able to generate repetitive looping code using a macro system [similar to that of the Crystal language](https://crystal-lang.org/reference/1.8/syntax_and_semantics/macros/index.html) that can compute some values to be injected into the generated code at compile time.  Rather than using some macro keywords as in Crystal, it is proposed that all macro definitions are defined as Haskell type pragmas used to instruct the compiler just as for the INLINE/NOINLINE/DEBUG_ASSERT pragmas.
 
-### **Add Explict `forall` and RankNTypes - CHANGED TO EXPLICT AND WITHOUT RANKNTYOES**
+### **Add Explict `forall` and RankNTypes - CHANGED TO USE WITH EXPLICT EXISTENTIAL TYPES WITHOUT RANKNTYPES**
 
 The following code has an explicit `forall a. ` after the `:` symbol because the type variable `a` is not defined on the left side of the `"` symbol:
 ```elm
