@@ -14,7 +14,6 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add a FileIO Module to the Files Package**](#add-a-fileio-module-to-the-files-package)
     - [**Add Symbolic Binary Operators for Bitwise Functions**](#add-symbolic-binary-operators-for-bitwise-functions)
     - [**Add the `Lazy` Type and Package Back to the Language**](#add-the-lazy-type-and-package-back-to-the-language)
-    - [**Add a `LinearArray a` Type to the Language**](#add-a-lineararray-a-type-to-the-language)
     - [**Add a `Change` Type to the Language**](#add-a-change-type-to-the-language)
     - [**Add a `Changing` Type to the Language - NO LONGER PROPOSED**](#add-a-changing-type-to-the-language---no-longer-proposed)
     - [**Add a `ChangingIndexable` Type to the Language - NO LONGER PROPOSED**](#add-a-changingindexable-type-to-the-language---no-longer-proposed)
@@ -30,6 +29,7 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add Contexts/`capability`'s/`Ability`'s to the Language**](#add-contextscapabilitysabilitys-to-the-language)
     - [**Add Many More `capability`'s**](#add-many-more-capabilitys)
     - [**Add the Ability to Specify Type Constraints**](#add-the-ability-to-specify-type-constraints)
+    - [**Add a `LinearArray a` Type to the Language**](#add-a-lineararray-a-type-to-the-language)
     - [**Add `UnsafePointer`Primative Type to the Language**](#add-unsafepointerprimative-type-to-the-language)
     - [**Add `do` Notation "Sugar" to the Language**](#add-do-notation-sugar-to-the-language)
     - [**Add a TEST Pragma that Tests Code When Run in Test Mode**](#add-a-test-pragma-that-tests-code-when-run-in-test-mode)
@@ -70,10 +70,6 @@ In a manner similar to the bitwise operators used by F#, implement `infix` opera
 ### **Add the `Lazy` Type and Package Back to the Language**
 
 This also allows having a standard `LazyList` module in the core package with appropriate functions as per non `Lazy` `List`'s.  Although using the Lazy type and lazy lists are slower than using more iterative techniques such as recursive functions, they can be used to write elegant code when performance is not critical such as in outer "loops" or for handling block structures such as producing a lazy list of array.  The documentation for these should warn users and show appropriate use.
-
-### **Add a `LinearArray a` Type to the Language**
-
-By itself, this is an immutable content array where it contains elements all of the same Type just as for lists and the current persistent `Array` implementation, but can be used with other features so it can be modified in a structured way using similar techniques to how `STArray` works in GHC Haskell.  Alternately, it may be considered to use compiler magic to do in-place mutation when the array to be changed is never referenced again after the modification call.  These arrays will also support automatic elision of array index bounds checks when it can be proved that the index is within bounds (lifting the bounds check ouside of inner loops).  To easier support the optimizations to make use of these contiguous arrays fast, they should likely be a built-in Type such as `List a` and can be represented in Type signatures as `[| <designated content Type> |]`, and by the same symbols when defining `LinearArray a` literals as for example `[| 1, 2, 3 |]` to define an array of `Number` containing the three `Number` elements.
 
 ### **Add a `Change` Type to the Language**
 
@@ -172,6 +168,10 @@ type Whatever a = Constructor a with
 myfunc : Sortable a => a -> List a
 ```
 which specifies the requirements for a `Sortable` `capability` and implements that `capability` for a new Custom Type (which would be used in the same way for a `type alias` to add `capability`'s to an existing Type).
+
+### **Add a `LinearArray a` Type to the Language**
+
+By itself, this is an immutable content array where it contains elements all of the same Type just as for lists and the current persistent `Array` implementation, but can be used with other features so it can be modified in a structured way using similar techniques to how `STArray` works in GHC Haskell.  Alternately, it may be considered to use compiler magic to do in-place mutation when the array to be changed is never referenced again after the modification call.  These arrays will also support automatic elision of array index bounds checks when it can be proved that the index is within bounds (lifting the bounds check ouside of inner loops).  To easier support the optimizations to make use of these contiguous arrays fast, they should likely be a built-in Type such as `List a` and can be represented in Type signatures as `[| <designated content Type> |]`, and by the same symbols when defining `LinearArray a` literals as for example `[| 1, 2, 3 |]` to define an array of `Number` containing the three `Number` elements.  As a built-in Type, there will be operators to access the indexed contents of this `LinearArray` Type.  There will be an access operator as `(!!) : LinearArray a -> Int -> Maybe a` which returns the contents of the given `Int` index wrapped in a `Maybe` or `Nothing` if the index is out of bounds; The modification operator would be as `(:=) : LinearArray a -> (Int, a) -> LinearArray a` with the compiler producing a new array if the old one is ever referenced again but if last used will modify the array in place and return the original array and no out of bounds indication returned but just the original array returned unmodified.  As a built-in Type that allows mutation in space for specific circumstances, this will require some compiler "magic" to accomplish and therefore requires compiler changes.
 
 ### **Add `UnsafePointer`Primative Type to the Language**
 
