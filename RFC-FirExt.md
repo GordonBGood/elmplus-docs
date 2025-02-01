@@ -26,23 +26,23 @@ This document proposes all of the changes that might be included in the "ElmPlus
     - [**Add `BigInt` Type for Multi-Precision Integers**](#add-bigint-type-for-multi-precision-integers)
     - [**Make Contexts as in `comparable`/`appendable` More Consistent**](#make-contexts-as-in-comparableappendable-more-consistent)
     - [**Change that "Triple-Quote String's Apply String Escapes**](#change-that-triple-quote-strings-apply-string-escapes)
-    - [**Add Contexts/`capability`'s/`Ability`'s to the Language**](#add-contextscapabilitysabilitys-to-the-language)
-    - [**Add Many More `capability`'s**](#add-many-more-capabilitys)
+    - [**Add Contexts/`Ability`'s/`Ability`'s to the Language**](#add-contextsabilitysabilitys-to-the-language)
+    - [**Add Many More `Ability`'s**](#add-many-more-abilitys)
     - [**Add the Ability to Specify Type Constraints**](#add-the-ability-to-specify-type-constraints)
     - [**Add a `LinearArray a` Type to the Language**](#add-a-lineararray-a-type-to-the-language)
     - [**Add `UnsafePointer`Primative Type to the Language**](#add-unsafepointerprimative-type-to-the-language)
     - [**Add `do` Notation "Sugar" to the Language**](#add-do-notation-sugar-to-the-language)
     - [**Add a TEST Pragma that Tests Code When Run in Test Mode**](#add-a-test-pragma-that-tests-code-when-run-in-test-mode)
     - [**Add `INLINE`/`NOINLINE` Pragmas**](#add-inlinenoinline-pragmas)
-    - [**Add Code Generation Macros Capability**](#add-code-generation-macros-capability)
+    - [**Add Code Generation Macros Ability**](#add-code-generation-macros-ability)
     - [**Add Explict `forall` and RankNTypes - CHANGED TO USE WITH EXPLICT EXISTENTIAL TYPES WITHOUT RANKNTYPES**](#add-explict-forall-and-rankntypes---changed-to-use-with-explict-existential-types-without-rankntypes)
-    - [**Add Higher Kinded Types (HKT's) - NO LONGER A PLANNED FEATURE**](#add-higher-kinded-types-hkts---no-longer-a-planned-feature)
+    - [**Add Higher Kinded Types (HKT's)**](#add-higher-kinded-types-hkts)
     - [**Make the `let` and `in` Keywords Optional**](#make-the-let-and-in-keywords-optional)
   - [Things Not Proposed to Change - ADDED TO MAKE USING CAPABILITIES MORE GENERAL](#things-not-proposed-to-change---added-to-make-using-capabilities-more-general)
     - [**Make the `type` and `type alias` Keywords Optional**](#make-the-type-and-type-alias-keywords-optional)
   - [Summary](#summary)
   - [Appendix](#appendix)
-    - [**Examples Using and Not Using `capability`'s**](#examples-using-and-not-using-capabilitys)
+    - [**Examples Using and Not Using `Ability`'s**](#examples-using-and-not-using-abilitys)
 
 ## Changes That Only Affect Parsing
 
@@ -99,15 +99,15 @@ Along with exposing the named List Type through the List module above to keep ba
 
 ### **Add all of the Bit Size/Signed and Unsigned Integer Options**
 
-This will include `Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16`, `UInt32`, and `UInt64`, with the current `Int` equal to `Int32` and a new `UInt` equal to `UInt32`.  All of these will have a context or "type class"/`capability` of `Countable` with a set of standard operators and functions that can be called on any of them when all arguments and results are the same type.
+This will include `Int8`, `Int16`, `Int32`, `Int64`, `UInt8`, `UInt16`, `UInt32`, and `UInt64`, with the current `Int` equal to `Int32` and a new `UInt` equal to `UInt32`.  All of these will have a context or "type class"/`Ability` of `Countable` with a set of standard operators and functions that can be called on any of them when all arguments and results are the same type.
 
 ### **Add `Float32` to the Float Types**
 
-This will include `Float32` and `Float64` with the current `Float` equal to `Float64`.  All of these will have a context or "type class"/`capability` of `Uncountable` with a set of standard operators and functions that can be called on any of them when all arguments and results are the same type.
+This will include `Float32` and `Float64` with the current `Float` equal to `Float64`.  All of these will have a context or "type class"/`Ability` of `Uncountable` with a set of standard operators and functions that can be called on any of them when all arguments and results are the same type.
 
 ### **Add `BigInt` Type for Multi-Precision Integers**
 
-This type will also automatically subscribe to the `Countable` `capability`.
+This type will also automatically subscribe to the `Countable` `Ability`.
 
 ### **Make Contexts as in `comparable`/`appendable` More Consistent**
 
@@ -125,19 +125,19 @@ Currently in Elm, triple quoted strings automatically include carriage return, l
 
 This is potentially a back breaking compatibility change so one might keep the current behaviour for source files with the ".elm" file extension and reserve this new behaviour for source files with the new ".fir" file extension.
 
-### **Add Contexts/`capability`'s/`Ability`'s to the Language**
+### **Add Contexts/`Ability`'s/`Ability`'s to the Language**
 
-These are similar to GHC Haskell's Type Classes with a different name and (probably) instantiated by "duck typing" where if a type implements all of the required functions for a `capability` inside a `where` clause, it has that capability.  The justification for `capability`'s instead of just Elm's context's is that the current contexts get more and more complicated as the number of primitive types and the variety of `capabilities` increase with all their combinations.  For instance, already Elm had to define a `compappend` context for those types that have both `comparable` and `appendable` contexts and even with only the proposed `equatable` context (in order for lambdas/functions to be tested for equality/sameness), this adds even more combinations and confusion.  Also, it would be good to have almost all types, including Tuple's, Record's, and Custom Type's, be `comparable` and `equatable` if their sub types are these, which would get very complex.  As well, with the current Elm context system, one can't "mix and match" type restrictions freely where with `capability`'s one can.  The syntax does not have to be complex, where all of the basic `capability`'s are defined with a default implementation in the `capability` definition `where` block, and types can override the default implementations by redefining them in their own `where` block at the time the Type (and maybe Type Alias) is defined, where this may only rarely need to be done for new Type's (and maybe Type Alias's) or for the more complex `capability`'s.
+These are similar to GHC Haskell's Type Classes with a different name and (probably) instantiated by "duck typing" where if a type implements all of the required functions for a `Ability` inside a `where` clause, it has that ability.  The justification for `Ability`'s instead of just Elm's context's is that the current contexts get more and more complicated as the number of primitive types and the variety of `capabilities` increase with all their combinations.  For instance, already Elm had to define a `compappend` context for those types that have both `comparable` and `appendable` contexts and even with only the proposed `equatable` context (in order for lambdas/functions to be tested for equality/sameness), this adds even more combinations and confusion.  Also, it would be good to have almost all types, including Tuple's, Record's, and Custom Type's, be `comparable` and `equatable` if their sub types are these, which would get very complex.  As well, with the current Elm context system, one can't "mix and match" type restrictions freely where with `Ability`'s one can.  The syntax does not have to be complex, where all of the basic `Ability`'s are defined with a default implementation in the `Ability` definition `where` block, and types can override the default implementations by redefining them in their own `where` block at the time the Type (and maybe Type Alias) is defined, where this may only rarely need to be done for new Type's (and maybe Type Alias's) or for the more complex `Ability`'s.
 
-Proposed `capability`'s will be at least the following:
-1. Equatable, which should automatically apply to all primitives and structured Types other than functions and types containing functions because all of the building blocks have this `capability`.  Implementing instances of this `capability` for types containing functions would be the work-around so that these can also be compared for equality.
+Proposed `Ability`'s will be at least the following:
+1. Equatable, which should automatically apply to all primitives and structured Types other than functions and types containing functions because all of the building blocks have this `Ability`.  Implementing instances of this `Ability` for types containing functions would be the work-around so that these can also be compared for equality.
 2. Sortable, automatically defined for all types except for functions and complex types containing functions.
 3. FromStringable, which means that a Type can be parsed from a string input, which should be defined for all types except for functions and complex types containing functions.
 4. Stringable, which means that a Type can be converted to a string, which should be defined for all types except for functions and complex types containing functions.
 5. Boundable, which should be defined for all Types that have definite lower and upper bound limits such as all integer types, maybe float types and char types, but not `String` types which may theorectially be extended indefinitely, and likely do not include complex types.
 6. Enumerable, which applies to Types that can be incremented so applies to a limited set of Types such as all integers, maybe `Char`'s, and not complex Type's in general but to custom Type's that have multiple variants where none of the variants contain any data.
-7. Countable, which applies to any integer Type, where all Countable Type's can be converted to Uncountable Type's by use of the `fromCountable` function that is a part of this `capability` interface, possibly with loss of precision where the Uncountable representation isn't addequate to keep the Countable precision.  It will also include functions and operators such as `(//)` (integer division) that applies only to the Uncountable `capability (and also the modulo and remainder operators)`.
-8. Uncountable, which applies to any `float` Type or types derived from `Float` type's/containing `Float` type's; this interface includes `truncate`, `ceiling`, `floor`, and `round` functions that convert to a Countable Type as well as functions and operators such as `(/)` (floating point division) that applies only to the Uncountable `capability`.
+7. Countable, which applies to any integer Type, where all Countable Type's can be converted to Uncountable Type's by use of the `fromCountable` function that is a part of this `Ability` interface, possibly with loss of precision where the Uncountable representation isn't addequate to keep the Countable precision.  It will also include functions and operators such as `(//)` (integer division) that applies only to the Uncountable `Ability (and also the modulo and remainder operators)`.
+8. Uncountable, which applies to any `float` Type or types derived from `Float` type's/containing `Float` type's; this interface includes `truncate`, `ceiling`, `floor`, and `round` functions that convert to a Countable Type as well as functions and operators such as `(/)` (floating point division) that applies only to the Uncountable `Ability`.
 9. Numerable, which applies to the set of all types that are either Countable or Uncountable and will include the basic functions (and operators) that apply to both.  These do not include pure equality/non-equality operators which apply to everything, not only numbers.
 10. Appendable, applies to any Type that can be merged together without changing the order of the contents of either argument (just add the second to the first without sorting), such as `List`'s, `String`'`, `Array`'s, and `LinearArray`'s.
 11. Traversable -> things like list's, seq's, etc. that have a sequence ordering.
@@ -150,24 +150,24 @@ Proposed `capability`'s will be at least the following:
 
 Some of these capabilities/abilities, such as `Mappable`, `MultiMappable`, and `Chainable`, which are applied to Type's that are containers for one or more other same Type's, require Higher Kinded Type's (HKT's) in order to work.  The pure functional languages of Haskell and PureScript have HKT's as necessary in their use of "Type Classes" which are essentially the same as the capabilities/abilities described here; OCaml, which is not a pure functional language also essentially uses HKT's in their equivalent abilities using "module's" but are limited to HKT's containing only one Type although that Type can be a compound Type containing other types such as a Tuple.
 
-### **Add Many More `capability`'s**
+### **Add Many More `Ability`'s**
 
-There need be `capability`'s to be similar to many of GHC Haskell's type classes such as `Showable`, `Readable`, `Enumerable`, `Boundable` (these and `Equatable` and `Comparable` may be derived automatically when the base types have the requisite `capability`'s, thus not including functions), as well as `Appendable`, `Traverseable`, `Foldable` (for which a `map` makes it a form of Functor and `map2` makes a form of Applicative without calling them that), `Chainable` (which makes the type a monad without calling it that), and so on as required.
+There need be `Ability`'s to be similar to many of GHC Haskell's type classes such as `Showable`, `Readable`, `Enumerable`, `Boundable` (these and `Equatable` and `Comparable` may be derived automatically when the base types have the requisite `Ability`'s, thus not including functions), as well as `Appendable`, `Traverseable`, `Foldable` (for which a `map` makes it a form of Functor and `map2` makes a form of Applicative without calling them that), `Chainable` (which makes the type a monad without calling it that), and so on as required.
 
 
 ### **Add the Ability to Specify Type Constraints**
 
-A new proposal is to explicitly specify when a Type and or type variable must have a particular `capability`; with this also applying to the definition of `capability`'s:  This means that a `capability` can require a "lesser" `capability` be implemented on the Type in order to "add" this new `capability`, and function Type Annotations can also require particular `capability`'s.  For example:
+A new proposal is to explicitly specify when a Type and or type variable must have a particular `Ability`; with this also applying to the definition of `Ability`'s:  This means that a `Ability` can require a "lesser" `Ability` be implemented on the Type in order to "add" this new `Ability`, and function Type Annotations can also require particular `Ability`'s.  For example:
 ```elm
-capability Equatable a => Sortable a where -- defines a capability
-  <capability function type signatures with optional default implementations>
+ability Equatable a => Sortable a where -- defines an ability
+  <ability function type signatures with optional default implementations>
 type Whatever a = Constructor a with
   Equatable -- no `where` definitions when defaults function implementations are suitable    
   Sortable where
     <the actual functions to be used if defaults (if any) are unsuitable>
 myfunc : Sortable a => a -> List a
 ```
-which specifies the requirements for a `Sortable` `capability` and implements that `capability` for a new Custom Type (which would be used in the same way for a `type alias` to add `capability`'s to an existing Type).
+which specifies the requirements for a `Sortable` `Ability` and implements that `Ability` for a new Custom Type (which would be used in the same way for a `type alias` to add `Ability`'s to an existing Type).
 
 ### **Add a `LinearArray a` Type to the Language**
 
@@ -185,7 +185,7 @@ This makes code using `Chainable` types much easier to read in minimizing the re
 
 In other words, `do` blocks are made up of assignments by the `<-` symbol to a lower-case Name where the right hand side of the symbol can have any alignment to the right of the Name and all Name's must align with each other, with lower-case Name definitions of values or functions using `=`, or with a function call that results in the same `AndThenable` Type (including the Type's it wraps).
 
-**It is now not considered to be a desirable feature of the Fir language and not really needed as, other than the `Chainable` capability that can be applied to container types, the resulting types are not general Monad types because it is not proposed that Higher Kinded Type's (HKT's) be added to the language as discussed below.  Rather, it is considered that equivalent "chaining" code be placed in a bloack to apply some special formatting rules for the "fir-format" ability to avoid continual indentation further to the right for evey level of chaining.  In that way, the code that is compiled and for which error messages are produced is the same code as was written by the programmer for less complexity in decoding error message and determining the cause of such errors.**
+**It is now not considered to be a desirable feature of the Fir language and not really needed as, other than the `Chainable` ability that can be applied to container types, the resulting types are not general Monad types because it is not proposed that Higher Kinded Type's (HKT's) be added to the language as discussed below.  Rather, it is considered that equivalent "chaining" code be placed in a bloack to apply some special formatting rules for the "fir-format" ability to avoid continual indentation further to the right for evey level of chaining.  In that way, the code that is compiled and for which error messages are produced is the same code as was written by the programmer for less complexity in decoding error message and determining the cause of such errors.**
 
 ### **Add a TEST Pragma that Tests Code When Run in Test Mode**
 
@@ -201,7 +201,7 @@ add a b = a + b
 ```
 Note that one doesn't have to include the name of the function in these pragmas as for GHC Haskell but the pragmas must be used immediately preceeding the function definition to which they apply with the same alignment of the function Name.
 
-### **Add Code Generation Macros Capability**
+### **Add Code Generation Macros Ability**
 
 In order to keep the Fir language simple, it is not proposed to have full Abstract Syntax Tree (AST) generation macros, but it is desired that Fir be able to generate repetitive looping code using a macro system [similar to that of the Crystal language](https://crystal-lang.org/reference/1.8/syntax_and_semantics/macros/index.html) that can compute some values to be injected into the generated code at compile time.  Rather than using some macro keywords as in Crystal, it is proposed that all macro definitions are defined as Haskell type pragmas used to instruct the compiler just as for the INLINE/NOINLINE/DEBUG_ASSERT pragmas.
 
@@ -218,11 +218,11 @@ runChange : forall s. Change s a -> a
 ```
 with this Type Annotation meaning that the Type `s` may be any Type (of rank 0 or 1) but that it is considered to be distinct from any other use of that same type for the whole duration of `s`.
 
-### **Add Higher Kinded Types (HKT's) - NO LONGER A PLANNED FEATURE**
+### **Add Higher Kinded Types (HKT's)**
 
-For use in definitions where the one can manipulate just the Type "constructor" without applying its type variables, which then results in a higher kinded type that would be a "real" type only when a sufficient number of type arguments have been applied.  This is particularly required in definitions of `Chainable` contrained functions.
+For use in definitions where the one can manipulate just the Type "constructor" without applying its type variables, which then results in a higher kinded type that would be a "real" type only when a sufficient number of type arguments have been applied.  This is particularly required in definitions of `Mappable`, `MultiMappable`, and `Chainable` contrained functions.
 
-**This is a requirement for defining some of the more complex `capability`'s such as for chained function mutation of array contents since the type of container must be modified to one that supports the passing of the "RealWorld" state across the chain.**
+**This is a requirement for defining some of the more complex `Ability`'s such as for chained function mutation of array contents since the type of container must be modified to one that supports the passing of the "RealWorld" state across the chain.**
 
 ### **Make the `let` and `in` Keywords Optional**
 
@@ -250,7 +250,7 @@ Currently, it is not considered to provide the programmer the ability to add new
 
 Also, currently it is not considered that the ability to turn common functions into infix operators with "back-ticks" around the name of the function be added back to the language as with a reasonably rich variety of mathematic and manipulation operators, this should not be necessary.  For instance, a frequent use of this in GHC Haskell is the back-ticked `div` operator for integer division instead of floating point division with the `/` operator, but Elm/Fir have the `//` operator for that.  It is proposed that the standard packages provide sufficient symbolic operators so that there shouldn't be a need for adding more.  The difficult with being able to use definied functions as operators is that, in order to be generally useful, they must also have the ability to have infix precedence and association runs specified for them, which adds complexity to little advantage.
 
-Originally, it consider considered that the ability to define new `capacility`'s would be confined to the core package to remove the temptation of programmers to define a full Haskell type system, although it will be considered to add other `capability`'s to the core package than as listed above if they would be commonly used to simplify code written in Fir.  As it is not proposed that Fir have Higer Kinded Type's (HKT's) that would allow generalized category theory Type definitions, it would be unlikely that Fir's limited `capability`'s be abused to excessive extension of the Type system other than as proposed above.
+Originally, it consider considered that the ability to define new `capacility`'s would be confined to the core package to remove the temptation of programmers to define a full Haskell type system, although it will be considered to add other `Ability`'s to the core package than as listed above if they would be commonly used to simplify code written in Fir.  As it is not proposed that Fir have Higer Kinded Type's (HKT's) that would allow generalized category theory Type definitions, it would be unlikely that Fir's limited `Ability`'s be abused to excessive extension of the Type system other than as proposed above.
 
 ### **Make the `type` and `type alias` Keywords Optional**
 
@@ -262,10 +262,10 @@ Therefore, these keywords will continue to be required in defining Type's and th
 
 ## Summary
 
-As can be seen above, there aren't all that many changes that affect the syntax to make using Fir much different than using Elm, with the major one being the "type class" feature of using `capability`'s to be able to use general functions without limiting the Module/Type with which they work, which feels something like having function overloading as used in other languages.
+As can be seen above, there aren't all that many changes that affect the syntax to make using Fir much different than using Elm, with the major one being the "type class" feature of using `Ability`'s to be able to use general functions without limiting the Module/Type with which they work, which feels something like having function overloading as used in other languages.
 
 ## Appendix
 
-### **Examples Using and Not Using `capability`'s**
+### **Examples Using and Not Using `Ability`'s**
 
 To be provided...
