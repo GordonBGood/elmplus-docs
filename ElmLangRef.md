@@ -54,13 +54,14 @@ This Elm language reference material has been reverse engineered from the [Elm c
 | Keyword | Use |
 |--------:|:----|
 | port | [port modules](#port-modules) |
-| effect, where, command, subscription | [effect modules](#effect-modules) |
+| effect, where, command, subscription | [effect modules](#effect-modules) (note that `where` is a reserved word everywhere, although it can only be used in effect module declarations) |
 | module, exposing | [modules](#modules) |
 | import, exposing, as | [imports](#imports) |
 | type alias | [type aliases](#type-aliases) |
 | type | [custom types](#custom-types) |
 | if, then, else | [`if ... then ... else` expressions](#if--then--else--expressions) |
 | case, of | [`case ... of` expressions](#if--then--else--expressions) |
+| let, in | [local definitions of values and functions](#local-definitions-of-values-and-functions) |
 | as | [applies a name to a full pattern or sub-pattern](#pattern-matching) |
 | infix, left, right, none | used in Kernel packages to define [symbol operators](#operators) |
 
@@ -80,7 +81,7 @@ These last keywords can define a new symbol operator, but can only be used from 
 | (..) | [expose all in module or all Constructors in Custom Type](#modules) |
 | (..) | [import all in module or all Constructors in Custom Type](#imports) |
 | (comma list) | [expose specified in module without qualification](#modules) |
-| (comma list) | [import all in module without qualification](#imports) |
+| (comma list) | [import specified names from module without qualification](#imports) |
 | (..,..), (..,..,..) | [constructor for Tuple Type](#the-tuple-type) |
 | (..,..), (..,..,..) | [pattern for Tuple Type](#tuple-pattern-matching) |
 | ( ... ) | [separates a Pattern Match Term in a function definition or destructure](#pattern-matching) |
@@ -111,10 +112,10 @@ These last keywords can define a new symbol operator, but can only be used from 
 | ... :: ... | [used to pattern match the head and rest of a List](#list-pattern-matching) |
 | ^, *, /, //, +, - | [arithmetic operators for number's/Float's/Int's](#operators) |
 | ==, /=, <, >, <=, >= | [comparison operators for comparable/comappend types](#operators) |
-| &&, || | [boolean operators Bool type](#operators) |
+| &&, &#124;&#124; | [boolean operators Bool type](#operators) |
 | ++ | [append operators append and comappend types (List's and String's)](#operators) |
-| |>, <|, >>, << | [function pipelining and composition operators for single argument functions](#operators) |
-| |., |= | [egnores/keeps the result of second parser from "elm/parser" package](#operators) |
+| &#124;>, <&#124;, >>, << | [function pipelining and composition operators for single argument functions](#operators) |
+| &#124;., &#124;= | [ignores/keeps the result of second parser from "elm/parser" package](#operators) |
 | <?>, </> | [adds a "?" or a "/" to a URL for "elm/url" package](#operators) |
 
 Operator symbols are all defined [in elm packages](#operators) and are defined as per the following example for a new `(^^^)` exclusive or operator:
@@ -122,7 +123,7 @@ Operator symbols are all defined [in elm packages](#operators) and are defined a
 import Bitwise
 infix left 3 (^^^) = Bitwise.xor
 ```
-where the new infix operator `^^^` is defined to have left associativity (meaning that the expression to the left is evaluated before application of the operator) with a precedence of 3 (with 9 as highest priority and higher numbers getting evaluated before higher numbers if there are no brackets with function application the very highest priority) and the expression at the right of the equals sign is the code that actually gets run when the operator is used.  Only binary operators can be defined meaning that all defined operations must take two arguments and return a single result.
+where the new infix operator `^^^` is defined to have left associativity (meaning that a chain such as `a op b op c` is grouped from the left as `(a op b) op c`) with a precedence of 3 (where 9 is the highest operator precedence and operators with higher precedence numbers are applied before those with lower numbers when there are no brackets; function application binds tighter than any operator) and the expression at the right of the equals sign is the code that actually gets run when the operator is used.  Only binary operators can be defined meaning that all defined operations must take two arguments and return a single result.
 
 ## Language Elements
 
@@ -213,7 +214,7 @@ A package module definition line that contains the word `effect` before the `mod
 
 ### **Imports**
 
-In order to use named Types, values, and functions that are exported from modules as per the above (other than those [imports that are automatic}(https://package.elm-lang.org/packages/elm/core/latest/)), one needs to import them on non white space or commented line(s) just after the module definition line but before any global Type, value, or function definitions.  The following code shows examples of this:
+In order to use named Types, values, and functions that are exported from modules as per the above (other than those [imports that are automatic](https://package.elm-lang.org/packages/elm/core/latest/)), one needs to import them on non white space or commented line(s) just after the module definition line but before any global Type, value, or function definitions.  The following code shows examples of this:
 ```elm
 -- qualified imports
 import List                            -- List.map, List.foldl
@@ -240,11 +241,11 @@ There is actually only one native type in JavaScript and that is the 64-bit IEEE
 
 #### **The Char Type**
 
-Unlike JavaScript, Elm distinguishes between single character Char's and possibly zero to any number of character String's as below.  `Char`'s in Elm represent UTF-8 characters so are variable length depending on their "code point", with the ASCII character set taking only one byte and thus being compatible with ASCII when limited to that character range.
+Unlike JavaScript, Elm distinguishes between single character Char's and possibly zero to any number of character String's as below.  `Char`'s in Elm represent single Unicode code points; they are not UTF-8 encoded (in the JavaScript implementation a `Char` is held as a JavaScript string of one or two UTF-16 code units).
 
 #### **The String Type**
 
-JavaScript has a native string type but it is UTF-16 and isn't exactly as the immutable UTF-8 Elm `String` type so there is a core package, "String", that defines the `String` type to handle the conversion to and fro in the use of the package functions.
+In the JavaScript implementation an Elm `String` is simply a JavaScript string, which is UTF-16 and immutable; there is no conversion layer. The core package "String" defines the `String` type and wraps the JavaScript string operations, so functions such as `String.length` count UTF-16 code units (a character outside the Basic Multilingual Plane, such as most emoji, counts as two).
 
 
 #### **The `Bool` Type**
@@ -330,7 +331,7 @@ test1 = { test0 | f = 5 } -- => same as Test 2 5
 ```
 where the "Record update syntax used to bind a value to `test1` makes a copy of `test0` with only the `f` field changed.
 
-Each Record even with the same field names and Types is a distinct Record Type and each have accessor functions that may have the same name.  Theoretically, the empty Record, `{}` need have no memory representation and if it has a memory representation as in Elm currently, could have just one instance but the current Elm compiler isn't that sophisticated.
+Records are structurally typed: two record types with the same field names and field types are the same type, and a `type alias` for a record type is only another name for that type, not a new type. Every field name has an automatically available accessor function (`.name`).  Theoretically, the empty Record, `{}` need have no memory representation and if it has a memory representation as in Elm currently, could have just one instance but the current Elm compiler isn't that sophisticated.
 
 Some of the above information is also provided in [the Elm documentation](https://elm-lang.org/docs/records)...
 
@@ -386,16 +387,16 @@ Finally, the Core Package contains a "Process" Type of "Id" (related to use in c
 Elm Literals may take the following forms:
 * A bare number without a decimal or exponent could be either an Int or a Float; to force to be an Int when it isn't inferred, a Type Annotation must be used or a function the returns an Int is used such as `floor`.  To force it to be a Float, the easiest way is to add a decimal and a zero for the fractional part (which may not be an exact representation depending on the value).
 
-* Int literals have a maximum range of -2^31 to 2^32-1 and Float literals have the range and precision of an IEEE double precision floating point number.
+* Int literals may be written in decimal or hexadecimal (`0x...`) form; the compiler's parser reads them into a 64-bit integer with no 32-bit limit, but what a literal becomes at run time depends on how it is used in the JavaScript implementation: bitwise operations truncate to 32 bits, ordinary arithmetic is exact only up to 53 bits, and beyond that precision is lost as for a `Float`. Elm has no single consistent rule here. Float literals have the range and precision of an IEEE double precision floating point number.
 
-* Char literals are inside a pair of right appostrophes/single quotes and may include escaped characters as per the following table, where escaped characters are represented by a single '/' character followed by one of the following characters to represent a given unicode code point:
-  1. '/' meaning a double back slash which represents a single back slash in the Char.
+* Char literals are inside a pair of right appostrophes/single quotes and may include escaped characters as per the following table, where escaped characters are represented by a single '\' (back slash) character followed by one of the following characters to represent a given unicode code point:
+  1. '\' meaning a double back slash (`\\`) which represents a single back slash in the Char.
   2. 'r' to represent a carriage return character.
   3. 'n' to represent a new line character.
-  4. 't' to represent a tab character (forbidden except in line comments the source code, but not in characters and strings).
+  4. 't' to represent a tab character (a literal tab character is forbidden in source code outside comments and strings, but the `\t` escape may be used in characters and strings).
   5. '"' to represent a single double quotation character.
-  6. ''' to represent a single back tick (apostrophe) character.
-  7. 'u' immediately followed by four to six hexidecimal digits (upper or lower case) enclosed in `{..}` characters representing unicode code points from 0x000000 to 0x10FFFF.
+  6. ''' to represent a single quote (apostrophe) character.
+  7. 'u' immediately followed by four to six hexadecimal digits (upper or lower case) enclosed in `{..}` characters representing unicode code points from 0x000000 to 0x10FFFF.
 
 * String literals are inside a pair of double quotes and may include escaped characters and/or Unicode code points as above.  String literals may also be inside a pair of sets of adjacent triple quote characters, in which case the carriage return and linefeed characters inside the string will be preserved meaning one can define very long multi-line `String`'s this way.  Since indentation and tabs don't have a meaning, the "triple-quoted `String` contents can be defined right from the left column and can include tab characters just as can regular `String`'s.
 
@@ -470,7 +471,7 @@ where the global case forms an infinite stream of the type a in head position bu
 
 Type Annotations are placed before and at the same indentation level of the name binding for a value or function definition on the next preceding line which is not white space or comment.  They use the symbol `:` to separate the given name from the Type Annotation, and for functions use the `->` symbol to separate each argument Type and the final result Type, as in the following example:
 ```elm
-hyptenuse : Float -> Float -> Float
+hypotenuse : Float -> Float -> Float
 hypotenuse x y = sqrt (x^2 + y^2)
 ```
 For function arguments that are functions (nested to any level), the function parameter must be surrounded by round brackets/parenthesis to separate the sub-function from the outer function as in the following example for the `map` function over list's:
@@ -509,7 +510,7 @@ Comparison Operators (for all `comparable` or `compappend` types):
 Bool operators (for two Bool types):
 | precedence | operators | associativity | description |
 |-----------:|:---------:|:--------------|-------------|
-| 2 | && | right | result of logical "and" of first and second |
+| 3 | && | right | result of logical "and" of first and second |
 | 2 | &#124;&#124; | right | result of logical "or" of first and second |
 
 Append operator (for appendable or compappend types):
@@ -520,10 +521,10 @@ Append operator (for appendable or compappend types):
 Function pipeline and composition operators (for two single argument functions):
 | precedence | operators | associativity | description |
 |-----------:|:---------:|:--------------|-------------|
-| 9 | <&#124; | right | passes forced right to left function |
-| 9 | &#124;> | left | passes forced left to right function |
-| 0 | << | left | passes result of right function to left function|
-| 0 | >> | right | passes result of left function to right function |
+| 0 | <&#124; | right | applies the function on the left to the argument on the right |
+| 0 | &#124;> | left | applies the function on the right to the argument on the left |
+| 9 | << | left | composes right to left: `(f << g) x` is `f (g x)` |
+| 9 | >> | right | composes left to right: `(f >> g) x` is `g (f x)` |
 
 List operator (automatically imported where head must be the same time as the contained type in the List):
 | precedence | operators | associativity | description |
@@ -542,7 +543,7 @@ Normally it is discouraged to use operators in Packages, but the elm team have b
 | precedence | operators | associativity | description |
 |-----------:|:---------:|:--------------|-------------|
 | 8 | <?> | left | adds question to URL path Parser |
-| 7 | </> | left | adds slash to URL path Parser |
+| 7 | </> | right | adds slash to URL path Parser |
 
 Since Elm only allows the definition of new operators in the "Kernel" packages as controlled by the key Elm development team, it is unlikely that Elm will have operators other than the above.
 
@@ -574,7 +575,7 @@ Pattern Matching, which is called destructuring in some languages, can be used i
 Tuple pattern matching works in all cases as there is only one "constructor" such as the following example:
 ```elm
 let (_, y) as t = (2, 3) -- note the whole tuple is t
-in y -- => 3.0
+in y -- => 3
 ```
 where the left pair of brackets are the Pattern Matching defining a Tuple and the right pair of brackets are the tuple "constructor". Note that we can use `_` for fields to be ignored
 
@@ -586,7 +587,7 @@ type alias TestR = { i : Int, f : Float }
 let
   { i, f } as t = TestR 2 3.0 -- note the whole record is t
   { i, f } = TestR 4 5.0 -- NAME CLASH of i and f!!!
-end (i, f)
+in (i, f)
 ```
 which won't work because the second pattern match shadows the `i` and `f` bindings.  This is only moderately useful in limited cases where all fields must be extracted just once as pattern matching a function argument...
 
